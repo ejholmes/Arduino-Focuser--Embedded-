@@ -7,6 +7,7 @@
 #include <inttypes.h>
 #include <avr/io.h>
 #include "AFMotor.h"
+#include "Messenger.h"
 
 class Focuser
 {
@@ -14,7 +15,7 @@ class Focuser
     Focuser(void);
     void move(int val);
     void stepSize(int val);
-    void interpretCommand(char* command);
+    void interpretCommand(Messenger *message);
   private:
 };
 

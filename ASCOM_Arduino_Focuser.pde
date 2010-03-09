@@ -6,8 +6,6 @@
 Focuser focuser = Focuser();
 Messenger message = Messenger();
 
-char command[MAXSIZE];
-
 void setup(){
   Serial.begin(9600);
   Serial.flush();
@@ -19,10 +17,7 @@ void setup(){
 }
 
 void messageCompleted(){
-  while(message.available()){
-    message.copyString(command, MAXSIZE);
-  }
-  focuser.interpretCommand(command);
+  focuser.interpretCommand(&message);
 }
 
 void loop(){

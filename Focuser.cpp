@@ -15,14 +15,20 @@ Focuser::Focuser(void)
   motor.setSpeed(10);
 }
 
-void Focuser::interpretCommand(char* command)
+void Focuser::interpretCommand(Messenger *message)
 {
-  switch(command[0]){
-    case 'F': //Move forwad
-      move((int)command[1]);
+  message->readChar();
+  char command = message->readChar();
+  
+  switch(command){
+    case 'F':
+      move(message->readInt());
       break;
-    case 'B': //Move backward
-      move((int)command[1]);
+    case 'B':
+      move((message->readInt() * -1));
+      break;
+    case 'S':
+      stepSize(message->readInt());
       break;
   }
 }
@@ -33,7 +39,7 @@ void Focuser::move(int val)
     motor.step(val, FORWARD, MICROSTEP);
   }
   else if (val < 0) {
-    motor.step(val, BACKWARD, MICROSTEP);
+    motor.step(abs(val), BACKWARD, MICROSTEP);
   }
 }
 

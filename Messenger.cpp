@@ -141,7 +141,7 @@ uint8_t Messenger::process(int serialByte) {
 			if (bufferIndex >= bufferLastIndex) reset();
          }
       } 
-      if ( messageState == 1 && callback != NULL) (*callback)();
+      if ( messageState == 1 && callback != NULL ) (*callback)();
       return messageState;
  }
 

@@ -25,6 +25,7 @@ public:
   uint8_t process(int serialByte);
   uint8_t available();
   void attach(messengerCallbackFunction newFunction);
+  char buffer[MESSENGERBUFFERSIZE]; // Buffer that holds the data
   
 private:
   void init(char separator);
@@ -42,7 +43,6 @@ private:
   uint8_t dumped;
   
   uint8_t bufferIndex; // Index where to write the data
-  char buffer[MESSENGERBUFFERSIZE]; // Buffer that holds the data
   uint8_t bufferLength; // The length of the buffer (defaults to 64)
   uint8_t bufferLastIndex; // The last index of the buffer
 };
