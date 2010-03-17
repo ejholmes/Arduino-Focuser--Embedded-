@@ -48,7 +48,7 @@ void Focuser::move(int val)
     motor.step(abs(val), BACKWARD, u_stepType);
   }
   motor.release();
-  Serial.println("DONE");
+  Serial.println("M DONE");
 }
 
 void Focuser::stepType(int type)
