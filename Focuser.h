@@ -16,7 +16,9 @@ class Focuser
     void move(int val);
     void stepSize(int val);
     void interpretCommand(Messenger *message);
+    void stepType(int type);
   private:
+    uint8_t u_stepType;
 };
 
 #endif
