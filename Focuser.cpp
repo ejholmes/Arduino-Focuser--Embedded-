@@ -47,6 +47,7 @@ void Focuser::move(int val)
   else if (val < 0) {
     motor.step(abs(val), BACKWARD, u_stepType);
   }
+  motor.release();
   Serial.println("DONE");
 }
 

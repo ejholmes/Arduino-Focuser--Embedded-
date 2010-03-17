@@ -3,8 +3,6 @@
 #include "Focuser.h"
 #include "Messenger.h"
 
-#define MAXSIZE 30
-
 Focuser focuser = Focuser();
 Messenger message = Messenger();
 
