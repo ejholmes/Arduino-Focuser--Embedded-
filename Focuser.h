@@ -12,11 +12,11 @@
 class Focuser
 {
   public:
-    Focuser(void);
-    void move(int val);
-    void stepSize(int val);
-    void interpretCommand(Messenger *message);
-    void stepType(int type);
+    Focuser(void); // Constructor
+    void move(int val); // Function for moving the focuser
+    void stepSize(int val); // Function for changing the motor RPM
+    void interpretCommand(Messenger *message); // Function for interpreting a command string
+    void stepType(int type); // Function for changing the step type used during move()'s
   private:
     uint8_t u_stepType;
 };

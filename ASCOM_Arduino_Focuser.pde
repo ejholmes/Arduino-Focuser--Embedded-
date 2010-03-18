@@ -10,6 +10,8 @@ void setup(){
   Serial.begin(9600);
   Serial.flush();
   
+  Serial.println("Ready");
+  
   message.attach(messageCompleted);
   
   focuser.stepSize(10);
