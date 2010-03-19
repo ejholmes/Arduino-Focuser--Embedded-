@@ -14,7 +14,7 @@ void setup(){
   
   message.attach(messageCompleted);
   
-  focuser.stepSize(10);
+  focuser.speed(10);
   
 }
 

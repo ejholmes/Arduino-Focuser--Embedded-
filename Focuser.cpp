@@ -34,7 +34,7 @@ void Focuser::interpretCommand(Messenger *message)
       move(message->readInt());
       break;
     case 'S': // Set RPM
-      stepSize(message->readInt());
+      speed(message->readInt());
       break;
     case 'R': // Release motor coils
       motor.release();
@@ -73,7 +73,7 @@ void Focuser::stepType(int type)
 // Function for changing the motor's RPM
 // A higher value makes the motor run faster. A good starting point is 10.
 //
-void Focuser::stepSize(int val)
+void Focuser::speed(int val)
 {
   motor.setSpeed(val);
 }
