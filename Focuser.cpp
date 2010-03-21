@@ -92,9 +92,9 @@ long Focuser::getFaststeps(long val)
 {
   if(val > 0)
   {
-    if(val % 32 == 0)
-      return val-32;
-    while(val % 32 != 0)
+    if(val % MICROSTEPS == 0)
+      return val-MICROSTEPS;
+    while(val % MICROSTEPS != 0)
     {
       val--;
     }
@@ -102,9 +102,9 @@ long Focuser::getFaststeps(long val)
   }
   else if (val < 0)
   {
-    if(abs(val) % 32 == 0)
-      return val+32;
-    while(abs(val) % 32 != 0)
+    if(abs(val) % MICROSTEPS == 0)
+      return val+MICROSTEPS;
+    while(abs(val) % MICROSTEPS != 0)
     {
       val++;
     }
@@ -120,8 +120,8 @@ void Focuser::singleStep(long val)
       if(Serial.available() > 0)
         break;
       motor.step(1, FORWARD, SINGLE);
-      position+=32;
-      val-=32;
+      position+=MICROSTEPS;
+      val-=MICROSTEPS;
     }
   }
   else if (val < 0) {
@@ -130,8 +130,8 @@ void Focuser::singleStep(long val)
       if(Serial.available() > 0 || position == 0)
         break;
       motor.step(1, BACKWARD, SINGLE);
-      position-=32;
-      val+=32;
+      position-=MICROSTEPS;
+      val+=MICROSTEPS;
     }
   }  
 }

@@ -9,7 +9,7 @@
 
 static uint8_t latch_state;
 
-#define MICROSTEPS 32  // 8, 16 & 32 are popular
+
 
 //#define MOTORDEBUG 1
 
