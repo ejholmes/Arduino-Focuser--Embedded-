@@ -40,6 +40,9 @@ void Focuser::interpretCommand(Messenger *message)
     case 'P':
       setPosition(message->readLong());
       break;
+    case 'G':
+      printPosition();
+      break;
     case 'H':
       Serial.flush();
       break;
@@ -49,6 +52,13 @@ void Focuser::interpretCommand(Messenger *message)
 void Focuser::setPosition(long newpos)
 {
   position = newpos;
+  printPosition();
+}
+
+void Focuser::printPosition()
+{
+  Serial.print("P ");
+  Serial.println(position);
 }
 
 //

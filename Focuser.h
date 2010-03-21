@@ -23,6 +23,7 @@ class Focuser
     void interpretCommand(Messenger *message); // Function for interpreting a command string
     void setPosition(long newpos);
   private:
+    void printPosition();
     void singleStep(long val);
     void microStep(long val);
     long getFaststeps(long val);
