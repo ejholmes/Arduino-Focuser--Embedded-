@@ -50,14 +50,30 @@ void Focuser::interpretCommand(Messenger *message)
 //
 void Focuser::move(int val)
 {
+  int stepped = 0;
   if (val > 0) { // If val is positive, move forward
-    motor.step(val, FORWARD, u_stepType);
+    int counter = val;
+    while(counter--)
+    {
+      motor.step(1, FORWARD, u_stepType);
+      stepped++;
+      if(Serial.available() > 0)
+        break;
+    }
   }
   else if (val < 0) { // else if val is negative, move backward
-    motor.step(abs(val), BACKWARD, u_stepType); // We take the absolute value of val since motor.step requires an unsigned int
+    int counter = abs(val);
+    while(counter--)
+    {
+      motor.step(1, BACKWARD, u_stepType);
+      stepped--;
+      if(Serial.available() > 0)
+        break;
+    }
   }
   motor.release(); // Release the motors when done. This works well for me but might not for others
-  Serial.println("M DONE"); // Tell the client that we are done moving.
+  Serial.print("M ");
+  Serial.println(stepped);
 }
 
 //
