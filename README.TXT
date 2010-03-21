@@ -11,7 +11,8 @@ The purpose of this project is to provide a layer between the hardware and ASCOM
 The following commands are currently available:
 
 ": M <POSITION> #" Moves the focuser to <POSITION>.
-": R #" Issues a motor.release(). Some steppers get pretty hot when the coils are not released.
+": L #" Issues a motor.release(). Some steppers get pretty hot when the coils are not released.
+": R <0-1> #" Reverses motor direction. 0=false, 1=true
 ": P #" Sets the current position;
 ": G #" Prints out the current position to the serial port. Useful for syncing.
 ": H #" Doesn't really do anything since anything in the serial buffer will halt the motor. Just prettier.

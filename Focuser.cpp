@@ -12,6 +12,7 @@ AF_Stepper motor(360 / DEGREES_PER_STEP, 2); // Create our stepper motor. I have
 
 uint8_t u_stepType = 0;
 long position = 0;
+bool reversed = false;
 
 //
 // Constructor
@@ -35,6 +36,9 @@ void Focuser::interpretCommand(Messenger *message)
       move(message->readLong());
       break;
     case 'R': // Release motor coils
+      reverse(message->readInt());
+      break;
+    case 'L':
       motor.release();
       break;
     case 'P':
@@ -59,6 +63,11 @@ void Focuser::printPosition()
 {
   Serial.print("P ");
   Serial.println(position);
+}
+
+void Focuser::reverse(bool rev = false)
+{
+  reversed = rev;
 }
 
 //
@@ -119,7 +128,7 @@ void Focuser::singleStep(long val)
     {
       if(Serial.available() > 0)
         break;
-      motor.step(1, FORWARD, SINGLE);
+      motor.step(1, (reversed)?FORWARD:BACKWARD, SINGLE);
       position+=MICROSTEPS;
       val-=MICROSTEPS;
     }
@@ -129,7 +138,7 @@ void Focuser::singleStep(long val)
     {
       if(Serial.available() > 0 || position == 0)
         break;
-      motor.step(1, BACKWARD, SINGLE);
+      motor.step(1, (reversed)?BACKWARD:FORWARD, SINGLE);
       position-=MICROSTEPS;
       val+=MICROSTEPS;
     }
@@ -143,7 +152,7 @@ void Focuser::microStep(long val)
     {
       if(Serial.available() > 0)
         break;
-      motor.step(1, FORWARD, MICROSTEP);
+      motor.step(1, (reversed)?FORWARD:BACKWARD, MICROSTEP);
       position++;
     }
   }
@@ -153,7 +162,7 @@ void Focuser::microStep(long val)
     {
       if(Serial.available() > 0 || position == 0)
         break;
-      motor.step(1, BACKWARD, MICROSTEP);
+      motor.step(1, (reversed)?BACKWARD:FORWARD, MICROSTEP);
       position--;
     }
   }  

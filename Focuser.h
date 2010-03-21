@@ -22,6 +22,7 @@ class Focuser
     void move(long val); // Function for moving the focuser
     void interpretCommand(Messenger *message); // Function for interpreting a command string
     void setPosition(long newpos);
+    void reverse(bool rev);
   private:
     void printPosition();
     void singleStep(long val);
@@ -29,6 +30,7 @@ class Focuser
     long getFaststeps(long val);
     uint8_t u_stepType;
     long position;
+    bool reversed;
 };
 
 #endif
