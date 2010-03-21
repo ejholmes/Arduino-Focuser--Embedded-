@@ -10,13 +10,8 @@ The purpose of this project is to provide a layer between the hardware and ASCOM
  
 The following commands are currently available:
 
-": M <STEPS> #" Move the focuser <STEPS> steps. A negative value moves the focuser in the opposite direction.
-": S <RPM> #" Sets the RPM for the AFMotor library. A larger value will move the focuser faster. 10 is a good starting value.
+": M <POSITION> #" Moves the focuser to <POSITION>.
 ": R #" Issues a motor.release(). Some steppers get pretty hot when the coils are not released.
-": T <STEPTYPE> #" Changes the step type to be used during move commands. The following values are available.
-	1 = SINGLE
-	2 = DOUBLE
-	3 = INTERLEAVE
-	8 = MICROSTEP
-	
-	These are defined in AFMotor.h
+": P #" Sets the current position;
+": G #" Prints out the current position to the serial port. Useful for syncing.
+": H #" Doesn't really do anything since anything in the serial buffer will halt the motor. Just prettier.
