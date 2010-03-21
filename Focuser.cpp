@@ -11,6 +11,7 @@ extern "C" {
 AF_Stepper motor(360 / DEGREES_PER_STEP, 2); // Create our stepper motor. I have mine on port 2 of the motor shield.
 
 uint8_t u_stepType = 0;
+long position = 0;
 
 //
 // Constructor
@@ -31,65 +32,119 @@ void Focuser::interpretCommand(Messenger *message)
   
   switch(command){
     case 'M': // Move
-      move(message->readInt());
-      break;
-    case 'S': // Set RPM
-      speed(message->readInt());
+      move(message->readLong());
       break;
     case 'R': // Release motor coils
       motor.release();
       break;
-    case 'T': // Set step type to be used in move()'s
-      stepType(message->readInt());
+    case 'P':
+      setPosition(message->readLong());
+      break;
+    case 'H':
+      Serial.flush();
       break;
   }
+}
+
+void Focuser::setPosition(long newpos)
+{
+  position = newpos;
 }
 
 //
 // Function for issuing moves
 //
-void Focuser::move(int val)
+void Focuser::move(long val)
 {
-  int stepped = 0;
-  if (val > 0) { // If val is positive, move forward
-    int counter = val;
-    while(counter--)
-    {
-      motor.step(1, FORWARD, u_stepType);
-      stepped++;
-      if(Serial.available() > 0)
-        break;
-    }
+  long move = val - position; // calculate move
+  
+  if(abs(move) > FAST)
+  {
+    long fastSteps = getFaststeps(move);
+    
+    motor.setSpeed(FASTSPEED);
+    singleStep(fastSteps);
+    
+    motor.setSpeed(SLOWSPEED);
+    microStep(move - fastSteps);
   }
-  else if (val < 0) { // else if val is negative, move backward
-    int counter = abs(val);
-    while(counter--)
-    {
-      motor.step(1, BACKWARD, u_stepType);
-      stepped--;
-      if(Serial.available() > 0)
-        break;
-    }
+  else
+  {
+    microStep(move);
   }
+  
   motor.release(); // Release the motors when done. This works well for me but might not for others
-  Serial.print("M ");
-  Serial.println(stepped);
+  Serial.print("P ");
+  Serial.println(position);
 }
 
-//
-// Function for changing to step type
-// Possible values are 1 = SINGLE, 2 = DOUBLE, 3 = INTERLEAVE, 8 = MICROSTEP (These are defined in AFMotor.h)
-// 
-void Focuser::stepType(int type)
+long Focuser::getFaststeps(long val)
 {
-  u_stepType = type;
+  if(val > 0)
+  {
+    if(val % 32 == 0)
+      return val-32;
+    while(val % 32 != 0)
+    {
+      val--;
+    }
+    return val;
+  }
+  else if (val < 0)
+  {
+    if(abs(val) % 32 == 0)
+      return val+32;
+    while(abs(val) % 32 != 0)
+    {
+      val++;
+    }
+    return val;
+  }
 }
 
-//
-// Function for changing the motor's RPM
-// A higher value makes the motor run faster. A good starting point is 10.
-//
-void Focuser::speed(int val)
+void Focuser::singleStep(long val)
 {
-  motor.setSpeed(val);
+  if (val > 0) {
+    while(val > 0)
+    {
+      if(Serial.available() > 0)
+        break;
+      motor.step(1, FORWARD, SINGLE);
+      position+=32;
+      val-=32;
+    }
+  }
+  else if (val < 0) {
+    while(val < 0)
+    {
+      if(Serial.available() > 0 || position == 0)
+        break;
+      motor.step(1, BACKWARD, SINGLE);
+      position-=32;
+      val+=32;
+    }
+  }  
+}
+
+void Focuser::microStep(long val)
+{
+  if (val > 0) { // If move is positive, move forward
+    while(val--)
+    {
+      if(Serial.available() > 0)
+        break;
+      motor.step(1, FORWARD, MICROSTEP);
+      position++;
+    }
+  }
+  else if (val < 0) { // else if move is negative, move backward
+    long counter = abs(val);
+    while(counter--)
+    {
+      if(Serial.available() > 0 || position == 0)
+        break;
+      motor.step(1, BACKWARD, MICROSTEP);
+      position--;
+    }
+  }  
 }
