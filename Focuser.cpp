@@ -101,13 +101,13 @@ long Focuser::getFaststeps(long val)
 {
   if(val > 0)
   {
-    if(val % MICROSTEPS == 0)
+    if(val % MICROSTEPS == 0) // if val is already a factor of MICROSTEPS then we decrement by MICROSTEPS and return
       return val-MICROSTEPS;
     while(val % MICROSTEPS != 0)
     {
       val--;
     }
-    return val;
+    return val; // When val is a factor of 32, return the value;
   }
   else if (val < 0)
   {
@@ -128,7 +128,7 @@ void Focuser::singleStep(long val)
     {
       if(Serial.available() > 0)
         break;
-      motor.step(1, (reversed)?FORWARD:BACKWARD, SINGLE);
+      motor.step(1, (reversed)?FORWARD:BACKWARD, DOUBLE);
       position+=MICROSTEPS;
       val-=MICROSTEPS;
     }
@@ -138,7 +138,7 @@ void Focuser::singleStep(long val)
     {
       if(Serial.available() > 0 || position == 0)
         break;
-      motor.step(1, (reversed)?BACKWARD:FORWARD, SINGLE);
+      motor.step(1, (reversed)?BACKWARD:FORWARD, DOUBLE);
       position-=MICROSTEPS;
       val+=MICROSTEPS;
     }
