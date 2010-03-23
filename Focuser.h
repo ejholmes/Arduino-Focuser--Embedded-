@@ -31,6 +31,7 @@ class Focuser
     uint8_t u_stepType;
     long position;
     bool reversed;
+    bool finish;
 };
 
 #endif

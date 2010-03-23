@@ -13,6 +13,7 @@ AF_Stepper motor(360 / DEGREES_PER_STEP, 2); // Create our stepper motor. I have
 uint8_t u_stepType = 0;
 long position = 0;
 bool reversed = false;
+bool finish = false;
 
 //
 // Constructor
@@ -76,6 +77,7 @@ void Focuser::reverse(bool rev = false)
 void Focuser::move(long val)
 {
   long move = val - position; // calculate move
+  finish = false;
   
   if(abs(move) > FAST)
   {
@@ -127,7 +129,10 @@ void Focuser::singleStep(long val)
     while(val > 0)
     {
       if(Serial.available() > 0)
+      {
+        finish = true;
         break;
+      }
       motor.step(1, (reversed)?FORWARD:BACKWARD, DOUBLE);
       position+=MICROSTEPS;
       val-=MICROSTEPS;
@@ -137,7 +142,10 @@ void Focuser::singleStep(long val)
     while(val < 0)
     {
       if(Serial.available() > 0 || position == 0)
+      {
+        finish = true;
         break;
+      }
       motor.step(1, (reversed)?BACKWARD:FORWARD, DOUBLE);
       position-=MICROSTEPS;
       val+=MICROSTEPS;
@@ -150,7 +158,7 @@ void Focuser::microStep(long val)
   if (val > 0) { // If move is positive, move forward
     while(val--)
     {
-      if(Serial.available() > 0)
+      if(Serial.available() > 0 && finish == false)
         break;
       motor.step(1, (reversed)?FORWARD:BACKWARD, MICROSTEP);
       position++;
@@ -160,7 +168,7 @@ void Focuser::microStep(long val)
     long counter = abs(val);
     while(counter--)
     {
-      if(Serial.available() > 0 || position == 0)
+      if((Serial.available() > 0 && finish == false) || position == 0)
         break;
       motor.step(1, (reversed)?BACKWARD:FORWARD, MICROSTEP);
       position--;
