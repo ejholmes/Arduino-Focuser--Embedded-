@@ -10,7 +10,7 @@ void setup(){
   Serial.begin(9600);
   Serial.flush();
   
-  Serial.println("Ready");
+  Serial.println("R ASCOM.Arduino.Focuser");
   
   message.attach(messageCompleted);
   
