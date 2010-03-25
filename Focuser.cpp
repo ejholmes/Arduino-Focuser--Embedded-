@@ -10,10 +10,8 @@ extern "C" {
 
 AF_Stepper motor(360 / DEGREES_PER_STEP, 2); // Create our stepper motor. I have mine on port 2 of the motor shield.
 
-uint8_t u_stepType = 0;
 long position = 0;
 bool reversed = false;
-bool finish = false;
 
 //
 // Constructor
@@ -21,7 +19,6 @@ bool finish = false;
 Focuser::Focuser(void)
 {
   motor.setSpeed(10); // Set a default RPM of 10
-  u_stepType = 8; // Set step type to microstepping.
 }
 
 //
@@ -77,21 +74,20 @@ void Focuser::reverse(bool rev = false)
 void Focuser::move(long val)
 {
   long move = val - position; // calculate move
-  finish = false;
   
   if(abs(move) > FAST)
   {
-    long fastSteps = getFaststeps(move);
+    long fastSteps = move - ((move > 0)?SLOWSTEPS:(SLOWSTEPS * -1));
     
     motor.setSpeed(FASTSPEED);
-    singleStep(fastSteps);
+    step(fastSteps, DOUBLE);
     
     motor.setSpeed(SLOWSPEED);
-    microStep(move - fastSteps);
+    step(((move > 0)?SLOWSTEPS:(SLOWSTEPS * -1)), MICROSTEP);
   }
   else
   {
-    microStep(move);
+    step(move, MICROSTEP);
   }
   
   motor.release(); // Release the motors when done. This works well for me but might not for others
@@ -99,68 +95,14 @@ void Focuser::move(long val)
   Serial.println(position);
 }
 
-long Focuser::getFaststeps(long val)
-{
-  if(val > 0)
-  {
-    if(val % MICROSTEPS == 0) // if val is already a factor of MICROSTEPS then we decrement by MICROSTEPS and return
-      return val-MICROSTEPS;
-    while(val % MICROSTEPS != 0)
-    {
-      val--;
-    }
-    return val; // When val is a factor of 32, return the value;
-  }
-  else if (val < 0)
-  {
-    if(abs(val) % MICROSTEPS == 0)
-      return val+MICROSTEPS;
-    while(abs(val) % MICROSTEPS != 0)
-    {
-      val++;
-    }
-    return val;
-  }
-}
-
-void Focuser::singleStep(long val)
-{
-  if (val > 0) {
-    while(val > 0)
-    {
-      if(Serial.available() > 0)
-      {
-        finish = true;
-        break;
-      }
-      motor.step(1, (reversed)?FORWARD:BACKWARD, DOUBLE);
-      position+=MICROSTEPS;
-      val-=MICROSTEPS;
-    }
-  }
-  else if (val < 0) {
-    while(val < 0)
-    {
-      if(Serial.available() > 0 || position == 0)
-      {
-        finish = true;
-        break;
-      }
-      motor.step(1, (reversed)?BACKWARD:FORWARD, DOUBLE);
-      position-=MICROSTEPS;
-      val+=MICROSTEPS;
-    }
-  }  
-}
-
-void Focuser::microStep(long val)
+void Focuser::step(long val, uint8_t steptype)
 {
   if (val > 0) { // If move is positive, move forward
     while(val--)
     {
-      if(Serial.available() > 0 && finish == false)
+      if(Serial.available() > 0)
         break;
-      motor.step(1, (reversed)?FORWARD:BACKWARD, MICROSTEP);
+      motor.step(1, (reversed)?FORWARD:BACKWARD, steptype);
       position++;
     }
   }
@@ -168,10 +110,10 @@ void Focuser::microStep(long val)
     long counter = abs(val);
     while(counter--)
     {
-      if((Serial.available() > 0 && finish == false) || position == 0)
+      if(Serial.available() > 0 || position == 0)
         break;
-      motor.step(1, (reversed)?BACKWARD:FORWARD, MICROSTEP);
+      motor.step(1, (reversed)?BACKWARD:FORWARD, steptype);
       position--;
     }
-  }  
+  } 
 }
