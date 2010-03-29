@@ -7,7 +7,7 @@ README
 
 What is it?
 -------------
-The purpose of this project is to provide a layer between the hardware and ASCOM driver for issuing move commands for a stepper motor, in my case it is the stepper motor for my homemade telescope focuser. This is accomplished by parsing Serial commands sent from the ASCOM Driver. When a command is received in the ": COMMAND <ARGUMENT> #" format, the Messenger object is passed to the Focuser::interpretCommand() function, which looks at the COMMAND and acts accordingly.
+The purpose of this project is to provide a layer between the hardware and [ASCOM driver](http://github.com/ejholmes/Arduino-Focuser--ASCOM-Driver-) for issuing move commands for a stepper motor, in my case it is the stepper motor for my homemade telescope focuser. This is accomplished by parsing Serial commands sent from the ASCOM Driver. When a command is received in the ": COMMAND <ARGUMENT> #" format, the Messenger object is passed to the Focuser::interpretCommand() function, which looks at the COMMAND and acts accordingly.
  
 The following commands are currently available:
 
