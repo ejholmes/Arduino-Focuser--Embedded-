@@ -16,4 +16,4 @@ The following commands are currently available:
 - `: R <0-1> #` Reverses motor direction. 0=false, 1=true.
 - `: P <position> #` Sets the current position to `position`. Note, this does not issue a move, it just tells the focuser that it's at said position.
 - `: G #` Prints out the current position to the serial port. Useful for syncing.
-- `: H #`" Doesn't really do anything since anything in the serial buffer will halt the motor. Just prettier.
+- `: H #` Doesn't really do anything since anything in the serial buffer will halt the motor. Just prettier.
