@@ -56,7 +56,7 @@ void Focuser::setPosition(long newpos)
 
 void Focuser::printPosition()
 {
-  Arduino.sendCommand(POSITION, 1, 100);
+  Arduino.sendCommand(POSITION, 1, position);
 }
 
 void Focuser::reverse(bool rev = false)
