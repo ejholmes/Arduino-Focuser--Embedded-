@@ -6,6 +6,8 @@ extern "C" {
 }
 
 #include "WProgram.h"
+#include <inttypes.h>
+#include <Arduino_NET.h>
 #include "Focuser.h"
 
 AF_Stepper motor(360 / DEGREES_PER_STEP, 2); // Create our stepper motor. I have mine on port 2 of the motor shield.
@@ -24,28 +26,23 @@ Focuser::Focuser(void)
 //
 // Function for interpreting a command string of the format ": COMMAND <ARGUMENT> #"
 //
-void Focuser::interpretCommand(Messenger *message)
+void Focuser::interpretCommand(int command, int argc, char** argv)
 {
-  message->readChar(); // Reads ":"
-  char command = message->readChar(); // Read the command
   
   switch(command){
-    case 'M': // Move
-      move(message->readLong());
+    case MOVE: // Move
+      move(atol(argv[0]));
       break;
-    case 'R': // Release motor coils
-      reverse(message->readInt());
+    case REVERSE: // Release motor coils
+      reverse(atoi(argv[0]));
       break;
-    case 'L':
-      motor.release();
+    case POSITION:
+      setPosition(atol(argv[0]));
       break;
-    case 'P':
-      setPosition(message->readLong());
-      break;
-    case 'G':
+    case PRINT_POSITION:
       printPosition();
       break;
-    case 'H':
+    case HALT:
       Serial.flush();
       break;
   }
@@ -59,8 +56,7 @@ void Focuser::setPosition(long newpos)
 
 void Focuser::printPosition()
 {
-  Serial.print("P ");
-  Serial.println(position);
+  Arduino.sendCommand(POSITION, 1, 100);
 }
 
 void Focuser::reverse(bool rev = false)
@@ -91,8 +87,7 @@ void Focuser::move(long val)
   }
   
   motor.release(); // Release the motors when done. This works well for me but might not for others
-  Serial.print("P ");
-  Serial.println(position);
+  printPosition();
 }
 
 void Focuser::step(long val, uint8_t steptype)

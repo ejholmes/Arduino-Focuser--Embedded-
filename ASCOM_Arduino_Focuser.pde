@@ -1,27 +1,21 @@
 // green yellow - black red
 
 #include "Focuser.h"
-#include "Messenger.h"
+#include <Arduino_NET.h>
 
 Focuser focuser = Focuser();
-Messenger message = Messenger();
 
 void setup(){
-  Serial.begin(9600);
-  Serial.flush();
-  
-  Serial.println("R ASCOM.Arduino.Focuser");
-  
-  message.attach(messageCompleted);
-  
+  Arduino.begin(19200);
+  Arduino.attach(messageComplete);
 }
 
-void messageCompleted(){
-  focuser.interpretCommand(&message);
+void messageComplete(byte command, int argc, char** argv) {
+  focuser.interpretCommand(command, argc, argv);
 }
 
 void loop(){
-  while(Serial.available()) message.process(Serial.read());
+  while(Arduino.available() > 0) Arduino.process();
 }
 
 
