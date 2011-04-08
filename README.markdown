@@ -1,6 +1,6 @@
 README
 ======
-- This project is the embedded code on the Arduino board for the Arduino focuser. 
+- This project is the firmware for the Arduino Focuser.
 - It uses the [AFMotor library](http://www.ladyada.net/make/mshield/use.html) and a modified Messenger library.
 - Code is for the motor shield from [adafruit industries](http://adafruit.com/index.php?main_page=product_info&cPath=17_21&products_id=81).
 
